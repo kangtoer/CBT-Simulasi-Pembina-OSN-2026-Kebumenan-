@@ -104,6 +104,20 @@ export default function ExamInterface() {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
+  // Auto-save effect every 30 seconds
+  useEffect(() => {
+    if (!resultId) return;
+
+    const autoSaveInterval = setInterval(() => {
+      if (answersRef.current && Object.keys(answersRef.current).length > 0) {
+        updateDoc(doc(db, 'results', resultId), { answers: answersRef.current })
+          .catch(err => console.error("Auto-save failed:", err));
+      }
+    }, 30000);
+
+    return () => clearInterval(autoSaveInterval);
+  }, [resultId]);
+
   const handleSelectOption = (questionId: string, optionIdx: number, type: 'single' | 'complex') => {
     setAnswers(prev => {
       const current = prev[questionId] || [];
