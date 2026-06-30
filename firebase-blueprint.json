@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User accounts for the CBT system.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "student"] },
+        "lastLogin": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "username", "password", "role"]
+    },
+    "Exam": {
+      "title": "Exam",
+      "description": "Exam configuration and settings.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "duration": { "type": "integer", "description": "Duration in minutes" },
+        "passingScore": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "duration"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "Individual questions within an exam.",
+      "type": "object",
+      "properties": {
+        "examId": { "type": "string" },
+        "type": { "type": "string", "enum": ["single", "complex"] },
+        "questionText": { "type": "string" },
+        "options": { "type": "array" },
+        "correctAnswer": { "type": "array" },
+        "points": { "type": "number" },
+        "category": { "type": "string" }
+      },
+      "required": ["examId", "type", "questionText", "options", "correctAnswer"]
+    },
+    "Result": {
+      "title": "Result",
+      "description": "Student exam attempts and results.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "examId": { "type": "string" },
+        "score": { "type": "number" },
+        "totalCorrect": { "type": "integer" },
+        "totalQuestions": { "type": "integer" },
+        "answers": { "type": "object" },
+        "status": { "type": "string", "enum": ["started", "completed"] },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "examId", "status", "startTime"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of user profiles."
+    },
+    "/exams/{examId}": {
+      "schema": "Exam",
+      "description": "Collection of available exams."
+    },
+    "/exams/{examId}/questions/{questionId}": {
+      "schema": "Question",
+      "description": "Sub-collection of questions for a specific exam."
+    },
+    "/results/{resultId}": {
+      "schema": "Result",
+      "description": "Collection of exam attempts."
+    }
+  }
+}
